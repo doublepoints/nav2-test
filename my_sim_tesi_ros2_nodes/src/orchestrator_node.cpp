@@ -61,7 +61,9 @@ namespace my_sim_tesi_ros2_nodes
         auto pose_msg = geometry_msgs::msg::PoseWithCovarianceStamped();
 
         pose_msg.header.frame_id = "map";
-        pose_msg.header.stamp = this->get_clock()->now();
+
+        //不设置时间戳，让ROS使用当前时间
+        //pose_msg.header.stamp = this->get_clock()->now();
 
         /*i valori della della covarianza li ho letti con una echo sul topic /initial_pose
           e poi impostandola manualmente da GUI RViz2*/
@@ -83,7 +85,9 @@ namespace my_sim_tesi_ros2_nodes
         pose_msg.pose.covariance[35] = 0.06853891909122467;
 
         initial_pose_publisher_->publish(pose_msg);
-        RCLCPP_INFO(this->get_logger(), "Initial pose published!");
+        //RCLCPP_INFO(this->get_logger(), "Initial pose published!");
+        RCLCPP_INFO(this->get_logger(), "Initial pose published in map frame without timestamp!");
+
     }
 
     void OrchestratorNode::publish_goal_pose()

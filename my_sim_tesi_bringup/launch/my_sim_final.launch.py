@@ -9,6 +9,8 @@ from launch.substitutions import PathJoinSubstitution, TextSubstitution
 
 from launch_ros.actions import Node
 
+SetEnvironmentVariable('USE_SIM_TIME', 'true'),
+
 def generate_launch_description():
     pkg_project_bringup = get_package_share_directory('my_sim_tesi_bringup')
     pkg_project_gazebo = get_package_share_directory('my_sim_tesi_gazebo')
@@ -66,6 +68,7 @@ def generate_launch_description():
         executable='static_transform_publisher',
         name='robot_scan_static_transform_publisher_map',
         output='screen',
+        parameters=[{'use_sim_time': True}],  # 确保添加这个参数
         arguments=['0', '0', '0', '0', '0', '0', '1', 'map', 'robot_scan/odom']
     )
 
@@ -149,8 +152,8 @@ def generate_launch_description():
         name='tf2_buffer_server',
         parameters=[{
             'buffer_size': 120.0,
-            'transform_tolerance': 0.5,  # 增加容错时间
-            'transform_cache_time': 10.0  # 增加缓存时间
+            'transform_tolerance': 1.0,  # 增加容错时间
+            'transform_cache_time': 30.0  # 增加缓存时间
         }]
     )
 
@@ -215,7 +218,7 @@ def generate_launch_description():
         pointcloud_to_laserscan_node,
         rviz,
         TimerAction(
-            period=12.0,
+            period=20.0,
             actions=[
                 nav2_launch,
             ]
