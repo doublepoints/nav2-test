@@ -296,11 +296,6 @@
       <publish_collision_pose>true</publish_collision_pose>
       <update_frequency>30</update_frequency>
     </plugin>
-    <!-- 添加位置控制插件 -->
-    <plugin filename="ignition-gazebo-pose-commander-system"
-        name="ignition::gazebo::systems::PoseCommander">
-      <pose_topic>model/robot_scan/pose_cmd</pose_topic>
-    </plugin>
     <!-- 添加位置控制支持插件 -->
     <plugin filename="ignition-gazebo-apply-joint-force-system"
             name="ignition::gazebo::systems::ApplyJointForce">

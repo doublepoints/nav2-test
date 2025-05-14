@@ -14,14 +14,12 @@ SimpleController::SimpleController(const rclcpp::NodeOptions &options)
     using namespace std::placeholders;
     
     this->declare_parameter<std::string>("model_name", "robot_scan");
-    this->declare_parameter<std::string>("world_name", "my_world"); // 添加世界名称参数
     this->declare_parameter<double>("initial_x", -13.104900);
     this->declare_parameter<double>("initial_y", 2.635770);
     this->declare_parameter<double>("initial_yaw", -1.602640);
     this->declare_parameter<double>("update_rate", 50.0); // Hz
     
     model_name_ = this->get_parameter("model_name").as_string();
-    world_name_ = this->get_parameter("world_name").as_string();
     current_x_ = this->get_parameter("initial_x").as_double();
     current_y_ = this->get_parameter("initial_y").as_double();
     current_yaw_ = this->get_parameter("initial_yaw").as_double();
@@ -31,9 +29,9 @@ SimpleController::SimpleController(const rclcpp::NodeOptions &options)
     cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
         "/cmd_vel_smoothed", 10, std::bind(&SimpleController::cmd_vel_callback, this, _1));
     
-    // 服务客户端
-    set_pose_client_ = this->create_client<ros_gz_interfaces::srv::SetEntityPose>(
-        "/world/" + world_name_ + "/set_entity_pose");
+    // 使用话题发布者替代服务客户端
+    pose_publisher_ = this->create_publisher<geometry_msgs::msg::Pose>("/robot_scan/pose", 10);
+
     // 创建里程计发布者
     odom_publisher_ = this->create_publisher<nav_msgs::msg::Odometry>("/robot_scan/odometry", 10);
     
@@ -48,22 +46,10 @@ SimpleController::SimpleController(const rclcpp::NodeOptions &options)
     
     last_update_time_ = this->now();
 
-     // 等待服务可用
-    RCLCPP_INFO(this->get_logger(), "Waiting for set_entity_pose service...");
-    while (!set_pose_client_->wait_for_service(std::chrono::seconds(1))) {
-        if (!rclcpp::ok()) {
-            RCLCPP_ERROR(this->get_logger(), "Interrupted while waiting for the service. Exiting.");
-            return;
-        }
-        RCLCPP_INFO(this->get_logger(), "Still waiting for set_entity_pose service...");
-    }
-
     RCLCPP_INFO(this->get_logger(), "Simple controller initialized for Ignition Gazebo");
-    RCLCPP_INFO(this->get_logger(), "Controlling model: %s in world: %s", 
-                model_name_.c_str(), world_name_.c_str());
+    RCLCPP_INFO(this->get_logger(), "Controlling model: %s", model_name_.c_str());
     RCLCPP_INFO(this->get_logger(), "Initial pose: [x=%f, y=%f, yaw=%f]", 
                 current_x_, current_y_, current_yaw_);
-    
     // 初始化位置
     update_model_state();
 }
@@ -72,6 +58,9 @@ void SimpleController::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedP
     // 存储收到的速度命令
     linear_x_ = msg->linear.x;
     angular_z_ = msg->angular.z;
+    // 添加日志，用于调试
+    RCLCPP_INFO(this->get_logger(), "Received cmd_vel: linear_x=%f, angular_z=%f", 
+                linear_x_, angular_z_);
 }
 
 void SimpleController::update_pose() {
@@ -139,39 +128,24 @@ void SimpleController::update_pose() {
 }
 
 void SimpleController::update_model_state() {
-    // 创建服务请求
-    auto request = std::make_shared<ros_gz_interfaces::srv::SetEntityPose::Request>();
+    // 创建Pose消息
+    geometry_msgs::msg::Pose pose_msg;
     
-    // 设置实体名称
-    request->entity.name = model_name_;
-
     // 设置位置
-    request->pose.position.x = current_x_;
-    request->pose.position.y = current_y_;
-    request->pose.position.z = current_z_;
+    pose_msg.position.x = current_x_;
+    pose_msg.position.y = current_y_;
+    pose_msg.position.z = current_z_;
     
     // 设置朝向
     tf2::Quaternion q;
     q.setRPY(0.0, 0.0, current_yaw_);
-    request->pose.orientation.x = q.x();
-    request->pose.orientation.y = q.y();
-    request->pose.orientation.z = q.z();
-    request->pose.orientation.w = q.w();
+    pose_msg.orientation.x = q.x();
+    pose_msg.orientation.y = q.y();
+    pose_msg.orientation.z = q.z();
+    pose_msg.orientation.w = q.w();
     
-    // 异步发送请求
-    auto future = set_pose_client_->async_send_request(
-        request,
-        [this](rclcpp::Client<ros_gz_interfaces::srv::SetEntityPose>::SharedFuture future) {
-            try {
-                auto response = future.get();
-                if (!response->success) {
-                    RCLCPP_WARN(this->get_logger(), "Failed to set entity pose");
-                }
-            } catch (const std::exception &e) {
-                RCLCPP_ERROR(this->get_logger(), "Service call failed: %s", e.what());
-            }
-        }
-    );
+    // 发布Pose消息
+    pose_publisher_->publish(pose_msg);
 }
 
 }  // namespace my_sim_tesi_ros2_nodes

@@ -20,12 +20,14 @@ private:
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr end_drone_subscriber_;
     rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initial_pose_publisher_;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr goal_pose_publisher_;
-    rclcpp::TimerBase::SharedPtr timer_drone_start_navigation_;
+    //rclcpp::TimerBase::SharedPtr timer_drone_start_navigation_;
+    rclcpp::TimerBase::SharedPtr timer_start_navigation_;
     bool drone_has_already_navigated_ = false;
     bool is_simulation_running_ = false;
 
     void clock_callback(const rosgraph_msgs::msg::Clock::SharedPtr msg);
-    void publish_drone_start();
+    void start_robot_navigation();  // 新方法：直接启动机器人导航
+    //void publish_drone_start();
     void publish_initial_pose(); 
     void publish_goal_pose();
     void drone_arrived_callback(const std_msgs::msg::String & msg);

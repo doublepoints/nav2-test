@@ -3,7 +3,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-#include "ros_gz_interfaces/srv/set_entity_pose.hpp"  // 使用服务而不是消息
 #include "geometry_msgs/msg/pose.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "tf2_ros/transform_broadcaster.h"
@@ -21,13 +20,12 @@ private:
     void update_model_state();
     
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
-    rclcpp::Client<ros_gz_interfaces::srv::SetEntityPose>::SharedPtr set_pose_client_;  // 改为服务客户端
+    rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr pose_publisher_;    
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_publisher_;
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr update_timer_;
     
     std::string model_name_;
-    std::string world_name_;
     double current_x_;
     double current_y_;
     double current_z_;

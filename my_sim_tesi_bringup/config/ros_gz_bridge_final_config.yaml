@@ -3,6 +3,12 @@
   ros_type_name: "geometry_msgs/msg/Twist"
   gz_type_name: "ignition.msgs.Twist"
   direction: ROS_TO_GZ
+  qos:
+    publisher:
+      history: keep_last
+      history_depth: 10
+      reliability: reliable
+      durability: volatile
 
 - ros_topic_name: "/robot_scan/odometry"
   gz_topic_name: "/model/robot_scan/odometry"

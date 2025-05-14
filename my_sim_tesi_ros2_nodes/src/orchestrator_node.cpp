@@ -21,20 +21,30 @@ namespace my_sim_tesi_ros2_nodes
             std::bind(&OrchestratorNode::drone_arrived_callback, this, _1));
         initial_pose_publisher_ = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("/initialpose", 10);
         goal_pose_publisher_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("/goal_pose", 10);
-        timer_drone_start_navigation_ = this->create_wall_timer(
-            std::chrono::milliseconds(500), std::bind(&OrchestratorNode::publish_drone_start, this));
+        //timer_drone_start_navigation_ = this->create_wall_timer(
+        //    std::chrono::milliseconds(500), std::bind(&OrchestratorNode::publish_drone_start, this));
+        
+        // 使用定时器直接启动小车导航，不等待无人机
+        timer_start_navigation_ = this->create_wall_timer(
+            std::chrono::milliseconds(3000), // 3秒后启动，给系统足够时间初始化
+            std::bind(&OrchestratorNode::start_robot_navigation, this));
+        
         clock_subscriber_ = this->create_subscription<rosgraph_msgs::msg::Clock>(
             "/clock", 10, std::bind(&OrchestratorNode::clock_callback, this, std::placeholders::_1));
+
+         // 设置无人机已导航标志为true，跳过无人机导航阶段
+        drone_has_already_navigated_ = true;
     }
 
     void OrchestratorNode::clock_callback(const rosgraph_msgs::msg::Clock::SharedPtr msg) {
         auto time = msg->clock.sec;
         if(time > 0) {
-            clock_subscriber_.reset(); // per evitare di effettuare callback dopo che il simulatore è stato avviato
+            clock_subscriber_.reset(); // 为避免处理更多回调
             is_simulation_running_ = true;
         }
     }
 
+    /*
     void OrchestratorNode::publish_drone_start() {
         if(!is_simulation_running_) {
             return;
@@ -44,6 +54,23 @@ namespace my_sim_tesi_ros2_nodes
         start_msg.data = "start_drone_navigation";
         start_drone_publisher_->publish(start_msg);
         this->publish_initial_pose();
+    }
+    */
+
+    // 新方法：直接启动机器人导航
+    void OrchestratorNode::start_robot_navigation() {
+        if(!is_simulation_running_) {
+            return;
+        }
+        this->timer_start_navigation_->cancel(); // 只执行一次
+        
+        RCLCPP_INFO(this->get_logger(), "Skipping quadcopter navigation, directly starting autonomous driving");
+        
+        // 发布初始姿态
+        this->publish_initial_pose();
+        
+        // 直接发布目标点，不等待无人机
+        this->publish_goal_pose();
     }
 
     void OrchestratorNode::drone_arrived_callback(const std_msgs::msg::String & msg){
