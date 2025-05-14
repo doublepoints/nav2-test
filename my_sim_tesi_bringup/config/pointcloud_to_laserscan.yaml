@@ -1,0 +1,24 @@
+pointcloud_to_laserscan_node:
+  ros__parameters:
+    target_frame: 'quadcopter/base_link'
+    transform_tolerance: 0.01
+    min_height: -0.5  # 允许检测下方的点
+    max_height: 1.0
+    angle_min: -1.5708  # -90度
+    angle_max: 1.5708   # 90度
+    angle_increment: 0.0044  # 0.25度，提高角度分辨率
+    scan_time: 0.033  # 30Hz
+    range_min: 0.2
+    range_max: 20.0
+    use_inf: true
+    inf_epsilon: 1.0
+    concurrency_level: 1
+    use_sim_time: true
+    # 添加QoS设置，与Nav2的obstacle_layer匹配
+    qos_overrides:
+      scan:
+        publisher:
+          reliability: best_effort
+          durability: volatile
+          history: keep_last
+          history_depth: 1 

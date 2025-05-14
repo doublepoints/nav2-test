@@ -1,0 +1,31 @@
+# depth_calib.yaml
+image_width: 640
+image_height: 480
+camera_name: rgbd_camera_depth
+
+distortion_model: plumb_bob
+distortion_coefficients:
+  # Gazebo 中无畸变
+  data: [0.0, 0.0, 0.0, 0.0, 0.0]
+
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [381.5, 0.0, 320.0,
+         0.0, 381.5, 240.0,
+         0.0,   0.0,   1.0]
+
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1.0, 0.0, 0.0,
+         0.0, 1.0, 0.0,
+         0.0, 0.0, 1.0]
+
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [381.5, 0.0, 320.0, 0.0,
+         0.0, 381.5, 240.0, 0.0,
+         0.0,   0.0,   1.0, 0.0]
+

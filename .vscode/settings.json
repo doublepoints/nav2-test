@@ -1,0 +1,8 @@
+{
+    "cmake.sourceDirectory": "/home/tridot/drone_ws/src/my_sim_tesi_bringup",
+    "files.associations": {
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "vector": "cpp"
+    }
+}

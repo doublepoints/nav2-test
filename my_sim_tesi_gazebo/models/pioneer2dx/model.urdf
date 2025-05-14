@@ -1,0 +1,357 @@
+<?xml version="1.0"?>
+<!-- Pioneer 2DX移动机器人模型定义文件 - 适用于ROS2和Ignition Gazebo Fortress的URDF版本 -->
+<robot name="pioneer2dx">
+  <!-- 材质定义 -->
+  <material name="black">
+    <color rgba="0.1 0.1 0.1 1"/>
+  </material>
+
+  <!-- 机器人基座链接 -->
+  <link name="base_footprint">
+    <visual>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  
+  <!-- 机器人主体链接 -->
+  <link name="base_link">
+    <!-- 惯性参数设置 -->
+    <inertial>
+      <mass value="5.67"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.07" ixy="0" ixz="0" iyy="0.08" iyz="0" izz="0.10"/>
+    </inertial>
+    
+    <!-- 主体碰撞检测 -->
+    <collision name="chassis_collision">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.445 0.277 0.17"/>
+      </geometry>
+    </collision>
+    
+    <!-- 主体视觉模型 -->
+    <visual name="chassis_visual">
+      <origin xyz="0 0 0.04" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://my_sim_tesi_gazebo/models/pioneer2dx/meshes/chassis.dae"/>
+      </geometry>
+    </visual>
+    
+    <!-- 万向轮碰撞检测 -->
+    <collision name="caster_collision">
+      <origin xyz="-0.200 0 -0.12" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+    
+    <!-- 万向轮视觉模型 -->
+    <visual name="caster_visual">
+      <origin xyz="-0.200 0 -0.12" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <!-- 激光雷达链接 -->
+  <link name="lidar_link">
+    <!-- 激光雷达惯性参数 -->
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.000166667" ixy="0" ixz="0" iyy="0.000166667" iyz="0" izz="0.000166667"/>
+    </inertial>
+    
+    <!-- 激光雷达碰撞检测 -->
+    <collision name="lidar_collision">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+    
+    <!-- 激光雷达视觉模型 -->
+    <visual name="lidar_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 右轮链接 -->
+  <link name="right_wheel">
+    <!-- 右轮惯性参数 -->
+    <inertial>
+      <mass value="1.5"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.0051" ixy="0" ixz="0" iyy="0.0051" iyz="0" izz="0.0090"/>
+    </inertial>
+    
+    <!-- 右轮碰撞检测 -->
+    <collision name="right_wheel_collision">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.11" length="0.05"/>
+      </geometry>
+    </collision>
+    
+    <!-- 右轮视觉模型 -->
+    <visual name="right_wheel_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.11" length="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <!-- 左轮链接 -->
+  <link name="left_wheel">
+    <!-- 左轮惯性参数 -->
+    <inertial>
+      <mass value="1.5"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.0051" ixy="0" ixz="0" iyy="0.0051" iyz="0" izz="0.0090"/>
+    </inertial>
+    
+    <!-- 左轮碰撞检测 -->
+    <collision name="left_wheel_collision">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.11" length="0.05"/>
+      </geometry>
+    </collision>
+    
+    <!-- 左轮视觉模型 -->
+    <visual name="left_wheel_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.11" length="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <!-- 基座到主体的固定关节 -->
+  <joint name="footprint_to_base_joint" type="fixed">
+    <origin xyz="0 0 0.16" rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  <!-- 激光雷达连接关节 -->
+  <joint name="lidar_joint" type="fixed">
+    <origin xyz="0 0 0.25" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+  </joint>
+
+  <!-- 左轮连接关节 -->
+  <joint name="left_wheel_joint" type="continuous">
+    <origin xyz="0.1 0.17 -0.05" rpy="-1.5707 0 0"/>
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="10" velocity="10"/>
+    <dynamics damping="0.1" friction="0.1"/>
+  </joint>
+
+  <!-- 右轮连接关节 -->
+  <joint name="right_wheel_joint" type="continuous">
+    <origin xyz="0.1 -0.17 -0.05" rpy="1.5707 0 0"/>
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="10" velocity="10"/>
+    <dynamics damping="0.1" friction="0.1"/>
+  </joint>
+
+  <!-- ROS2 控制接口 -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- Gazebo特定配置 -->
+  <!-- 设置材质表面属性 -->
+  <gazebo reference="base_link">
+    <material>Gazebo/Grey</material>
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+
+  <gazebo reference="left_wheel">
+    <material>Gazebo/Black</material>
+    <mu1>100000.0</mu1>
+    <mu2>100000.0</mu2>
+    <slip1>0.0</slip1>
+    <slip2>0.0</slip2>
+  </gazebo>
+
+  <gazebo reference="right_wheel">
+    <material>Gazebo/Black</material>
+    <mu1>100000.0</mu1>
+    <mu2>100000.0</mu2>
+    <slip1>0.0</slip1>
+    <slip2>0.0</slip2>
+  </gazebo>
+
+  <!-- 激光雷达传感器 Gazebo配置 -->
+  <gazebo reference="lidar_link">
+    <material>Gazebo/Red</material>
+    <sensor name="front_lidar" type="gpu_lidar">
+      <pose>0 0 0 0 0 0</pose>
+      <topic>/pioneer2dx/scan</topic>
+      <update_rate>20</update_rate>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>450</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.1459</min_angle>
+            <max_angle>3.1459</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>16</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.261799</min_angle>
+            <max_angle>0.261799</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.05</min>
+          <max>5</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </lidar>
+      <visualize>true</visualize>
+    </sensor>
+  </gazebo>
+
+  <!-- ROS2 Gazebo控制插件 -->
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find my_sim_tesi_gazebo)/config/pioneer2dx_controller.yaml</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+    </plugin>
+  </gazebo>
+
+  <!-- 差速驱动插件 - 用于直接Ignition控制 -->
+  <gazebo>
+    <plugin filename="libignition-gazebo-diff-drive-system.so" name="ignition::gazebo::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.34</wheel_separation>
+      <wheel_radius>0.11</wheel_radius>
+      <odom_publish_frequency>5</odom_publish_frequency>
+      <max_linear_acceleration>1.5</max_linear_acceleration>
+      <min_linear_acceleration>-1.5</min_linear_acceleration>
+      <max_angular_acceleration>1.6</max_angular_acceleration>
+      <min_angular_acceleration>-1.6</min_angular_acceleration>
+      <max_linear_velocity>0.4</max_linear_velocity>
+      <min_linear_velocity>-0.4</min_linear_velocity>
+      <max_angular_velocity>1</max_angular_velocity>
+      <min_angular_velocity>-1</min_angular_velocity>
+      <topic>pioneer2dx/cmd_vel</topic>
+      <odom_topic>pioneer2dx/odometry</odom_topic>
+    </plugin>
+  </gazebo>
+
+  <!-- 关节状态发布器插件 -->
+  <gazebo>
+    <plugin filename="libignition-gazebo-joint-state-publisher-system.so" name="ignition::gazebo::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+    </plugin>
+  </gazebo>
+
+  <!-- 键盘控制插件 -->
+  <gazebo>
+    <!-- 前进 -->
+    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="ignition::gazebo::systems::TriggeredPublisher">
+      <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+        <match field="data">16777235</match>
+      </input>
+      <output type="ignition.msgs.Twist" topic="/pioneer2dx/cmd_vel">
+        linear: {x: 0.4}, angular: {z: 0.0}
+      </output>
+    </plugin>
+
+    <!-- 后退 -->
+    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="ignition::gazebo::systems::TriggeredPublisher">
+      <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+        <match field="data">16777237</match>
+      </input>
+      <output type="ignition.msgs.Twist" topic="/pioneer2dx/cmd_vel">
+        linear: {x: -0.4}, angular: {z: 0.0}
+      </output>
+    </plugin>
+
+    <!-- 左转 -->
+    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="ignition::gazebo::systems::TriggeredPublisher">
+      <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+        <match field="data">16777234</match>
+      </input>
+      <output type="ignition.msgs.Twist" topic="/pioneer2dx/cmd_vel">
+        linear: {x: 0.0}, angular: {z: 1.0}
+      </output>
+    </plugin>
+
+    <!-- 右转 -->
+    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="ignition::gazebo::systems::TriggeredPublisher">
+      <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+        <match field="data">16777236</match>
+      </input>
+      <output type="ignition.msgs.Twist" topic="/pioneer2dx/cmd_vel">
+        linear: {x: 0.0}, angular: {z: -1.0}
+      </output>
+    </plugin>
+
+    <!-- 停止 -->
+    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="ignition::gazebo::systems::TriggeredPublisher">
+      <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+        <match field="data">83</match>
+      </input>
+      <output type="ignition.msgs.Twist" topic="/pioneer2dx/cmd_vel">
+        linear: {x: 0.0}, angular: {z: 0.0}
+      </output>
+    </plugin>
+  </gazebo>
+</robot>
