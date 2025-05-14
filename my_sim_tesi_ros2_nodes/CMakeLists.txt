@@ -18,6 +18,11 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(rosgraph_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+# 简化版模型
+find_package(gazebo_msgs REQUIRED)
+find_package(ros_gz_bridge REQUIRED)
+find_package(ros_gz_interfaces REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -30,6 +35,10 @@ add_library(action_client SHARED
 add_library(orchestrator SHARED
   src/orchestrator_node.cpp)
 
+# 添加simple_controller库
+add_library(simple_controller SHARED
+  src/simple_controller.cpp)
+
 target_include_directories(action_server PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -39,6 +48,11 @@ target_include_directories(action_client PRIVATE
   $<INSTALL_INTERFACE:include>)
 
 target_include_directories(orchestrator PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+  # 添加simple_controller INCLUDE 目录
+target_include_directories(simple_controller PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
@@ -67,6 +81,20 @@ ament_target_dependencies(orchestrator
   "rclcpp_components"
   "tf2")
 
+# 添加simple_controller 依赖
+ament_target_dependencies(simple_controller
+  "rclcpp"
+  "geometry_msgs"
+  "nav_msgs"
+  "gazebo_msgs"
+  "tf2"
+  "tf2_ros"
+  "tf2_geometry_msgs"
+  "rclcpp_components"
+  # 新增的依赖
+  "ros_gz_bridge"
+  "ros_gz_interfaces")
+
 rclcpp_components_register_node(action_server 
   PLUGIN "my_sim_tesi_ros2_nodes::PoseControlActionServer" 
   EXECUTABLE pose_control_action_server)
@@ -78,6 +106,11 @@ rclcpp_components_register_node(action_client
 rclcpp_components_register_node(orchestrator
   PLUGIN "my_sim_tesi_ros2_nodes::OrchestratorNode" 
   EXECUTABLE orchestrator_node)
+
+# 注册simple_controller组件节点
+rclcpp_components_register_node(simple_controller
+  PLUGIN "my_sim_tesi_ros2_nodes::SimpleController"
+  EXECUTABLE simple_controller_node)
 
 install(TARGETS
   action_server
@@ -99,6 +132,13 @@ install(TARGETS
 
 install(DIRECTORY include/
   DESTINATION include/${PROJECT_NAME})
+
+# 安装simple_controller组件节点
+install(TARGETS
+  simple_controller
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
 
 # 新增以下内容来安装Python脚本
 #install(PROGRAMS

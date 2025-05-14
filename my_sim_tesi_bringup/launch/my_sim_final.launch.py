@@ -58,6 +58,8 @@ def generate_launch_description():
             'qos_overrides./quadcopter/rgbd_camera/points.publisher.history': 'keep_last',
             'qos_overrides./quadcopter/rgbd_camera/points.publisher.history_depth': '1',
             'qos_overrides./quadcopter/rgbd_camera/points.publisher.reliability': 'best_effort',
+            'qos_overrides./robot_scan/pose.publisher.reliability': 'reliable',
+            'qos_overrides./robot_scan/pose.publisher.durability': 'volatile',
             'use_sim_time': True,
         }],
         output='screen'
@@ -201,6 +203,22 @@ def generate_launch_description():
         parameters=[os.path.join(pkg_project_bringup, 'config', 'pointcloud_to_laserscan.yaml')]
     )
 
+    # 添加简单控制器节点
+    simple_controller_node = Node(
+        package='my_sim_tesi_ros2_nodes',
+        executable='simple_controller_node',
+        name='simple_controller',
+        output='screen',
+        parameters=[{
+            'model_name': 'robot_scan',
+            'initial_x': -13.104900, 
+            'initial_y': 2.635770,
+            'initial_yaw': -1.602640,
+            'update_rate': 50.0,
+            'use_sim_time': True
+        }]
+    )
+
     # 添加全局TF参数
     return LaunchDescription([
         SetEnvironmentVariable('ROS_DOMAIN_ID', '13'),
@@ -217,6 +235,7 @@ def generate_launch_description():
         quadcopter_base_link_tf,
         pointcloud_to_laserscan_node,
         rviz,
+        simple_controller_node,
         TimerAction(
             period=20.0,
             actions=[

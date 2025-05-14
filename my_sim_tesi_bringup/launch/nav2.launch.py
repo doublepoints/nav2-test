@@ -80,7 +80,7 @@ def generate_launch_description():
         name='velocity_smoother',
         output='screen',
         parameters=[config_file],
-        remappings=[('/cmd_vel_smoothed', '/robot_scan/cmd_vel')]
+        remappings=[('/cmd_vel_smoothed', '/cmd_vel_smoothed')]
     )
 
     return LaunchDescription([

@@ -40,6 +40,19 @@
       reliability: reliable
       durability: transient_local
 
+# 添加以下桥接配置，用于控制无人小车位置
+- ros_topic_name: "/robot_scan/pose"
+  gz_topic_name: "/model/robot_scan/pose_cmd"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "ignition.msgs.Pose"
+  direction: ROS_TO_GZ
+  qos:
+    publisher:
+      history: keep_last
+      history_depth: 1
+      reliability: reliable
+      durability: volatile
+
 - ros_topic_name: "/quadcopter/cmd_vel"
   gz_topic_name: "/quadcopter/command/cmd_vel"
   ros_type_name: "geometry_msgs/msg/Twist"
