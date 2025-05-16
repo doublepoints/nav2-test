@@ -88,7 +88,98 @@
   gz_type_name: "ignition.msgs.Clock"
   direction: GZ_TO_ROS
 
-# rgbd camera
+# rgbd camera on robot_scan
+- ros_topic_name: "/robot_scan/rgbd_camera/image_raw"
+  gz_topic_name: "/model/robot_scan/rgbd_camera/image_raw/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
+  qos:
+    publisher:
+      history: keep_last
+      history_depth: 1
+      reliability: best_effort
+      durability: volatile
+      deadline:
+        sec: 0
+        nsec: 100000000  # 10Hz
+      lifespan:
+        sec: 0
+        nsec: 100000000  # 10Hz
+
+- ros_topic_name: "/robot_scan/rgbd_camera/camera_info"
+  gz_topic_name: "/model/robot_scan/rgbd_camera/image_raw/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "ignition.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+  qos:
+    publisher:
+      history: keep_last
+      history_depth: 1
+      reliability: best_effort
+      durability: volatile
+      deadline:
+        sec: 0
+        nsec: 100000000  # 10Hz
+      lifespan:
+        sec: 0
+        nsec: 100000000  # 10Hz
+
+- ros_topic_name: "/robot_scan/rgbd_camera/depth/image_raw"
+  gz_topic_name: "/model/robot_scan/rgbd_camera/image_raw/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
+  qos:
+    publisher:
+      history: keep_last
+      history_depth: 1
+      reliability: best_effort
+      durability: volatile
+      deadline:
+        sec: 0
+        nsec: 100000000  # 10Hz
+      lifespan:
+        sec: 0
+        nsec: 100000000  # 10Hz
+
+- ros_topic_name: "/robot_scan/rgbd_camera/depth/camera_info"
+  gz_topic_name: "/model/robot_scan/rgbd_camera/depth/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "ignition.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+  qos:
+    publisher:
+      history: keep_last
+      history_depth: 1
+      reliability: best_effort
+      durability: volatile
+      deadline:
+        sec: 0
+        nsec: 100000000  # 10Hz
+      lifespan:
+        sec: 0
+        nsec: 100000000  # 10Hz
+
+- ros_topic_name: "/robot_scan/rgbd_camera/points"
+  gz_topic_name: "/model/robot_scan/rgbd_camera/image_raw/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "ignition.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+  qos:
+    publisher:
+      history: keep_last
+      history_depth: 1
+      reliability: best_effort
+      durability: volatile
+      deadline:
+        sec: 0
+        nsec: 100000000  # 10Hz
+      lifespan:
+        sec: 0
+        nsec: 100000000  # 10Hz
+
+# rgbd camera on quadcopter
 - ros_topic_name: "/quadcopter/rgbd_camera/image_raw"
   gz_topic_name: "/quadcopter/rgbd_camera/image_raw/image"
   ros_type_name: "sensor_msgs/msg/Image"

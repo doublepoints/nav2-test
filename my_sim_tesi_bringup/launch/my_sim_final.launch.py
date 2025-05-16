@@ -174,6 +174,19 @@ def generate_launch_description():
         ],
         parameters=[{'use_sim_time': True}]
     )
+    
+    robot_rgbd_camera_static_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='robot_rgbd_camera_static_tf',
+        arguments=[
+            '0.05', '0', '0.05',  # 平移
+            '0', '0', '0',       # 旋转
+            'robot_scan/lidar_link',
+            'robot_scan/lidar_link/rgbd_camera'
+        ],
+        parameters=[{'use_sim_time': True}]
+    )
 
     # 添加quadcopter到base_link的变换
     quadcopter_base_link_tf = Node(
@@ -214,6 +227,7 @@ def generate_launch_description():
         quadcopter_state_publisher,
         tf2_buffer_server,
         rgbd_camera_static_tf,
+        robot_rgbd_camera_static_tf,
         quadcopter_base_link_tf,
         pointcloud_to_laserscan_node,
         rviz,
