@@ -138,7 +138,7 @@
 
       <!-- 新增RGBD相机传感器 -->
       <sensor name="rgbd_camera" type="rgbd">
-        <pose>0.05 0 0.05 0 0 0</pose>
+        <pose>0.05 0 1.05 0 0 0</pose>
         <update_rate>15</update_rate>
         <camera name="head">
           <horizontal_fov>1.3962634</horizontal_fov>

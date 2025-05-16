@@ -28,7 +28,7 @@ def generate_launch_description():
         robot_scan_description = "" # Or raise an error
 
     robot_scan_urdf = """<?xml version="1.0"?>
-    <robot name="scan_robot">
+    <robot name="robot_scan">
         <link name="base_link"/>
         <link name="lidar_link"/>
         <joint name="lidar_joint" type="fixed">
