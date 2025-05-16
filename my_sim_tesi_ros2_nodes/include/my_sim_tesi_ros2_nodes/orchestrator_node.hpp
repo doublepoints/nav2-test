@@ -21,11 +21,15 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initial_pose_publisher_;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr goal_pose_publisher_;
     rclcpp::TimerBase::SharedPtr timer_drone_start_navigation_;
-    bool drone_has_already_navigated_ = false;
+    rclcpp::TimerBase::SharedPtr timer_publish_goal_;
+    bool drone_has_already_navigated_ = true;// 设置为true以跳过无人机导航
     bool is_simulation_running_ = false;
+    bool goal_published_ = false; // 跟踪目标是否已发布
+
 
     void clock_callback(const rosgraph_msgs::msg::Clock::SharedPtr msg);
-    void publish_drone_start();
+    void start_robot_navigation(); // 从publish_drone_start重命名
+//    void publish_drone_start();
     void publish_initial_pose(); 
     void publish_goal_pose();
     void drone_arrived_callback(const std_msgs::msg::String & msg);

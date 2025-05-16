@@ -21,10 +21,24 @@ namespace my_sim_tesi_ros2_nodes
             std::bind(&OrchestratorNode::drone_arrived_callback, this, _1));
         initial_pose_publisher_ = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("/initialpose", 10);
         goal_pose_publisher_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("/goal_pose", 10);
-        timer_drone_start_navigation_ = this->create_wall_timer(
-            std::chrono::milliseconds(500), std::bind(&OrchestratorNode::publish_drone_start, this));
+        
+        // 设置为true以跳过无人机导航
+        drone_has_already_navigated_ = true;
+        goal_published_ = false;
+
         clock_subscriber_ = this->create_subscription<rosgraph_msgs::msg::Clock>(
             "/clock", 10, std::bind(&OrchestratorNode::clock_callback, this, std::placeholders::_1));
+        
+        
+        //timer_drone_start_navigation_ = this->create_wall_timer(
+        //    std::chrono::milliseconds(500), std::bind(&OrchestratorNode::publish_drone_start, this));
+        // 修改定时器以跳过无人机导航
+        timer_drone_start_navigation_ = this->create_wall_timer(
+            std::chrono::milliseconds(5000), std::bind(&OrchestratorNode::start_robot_navigation, this));
+        
+         // 创建一个定时器，在初始化后一段时间发布目标
+        timer_publish_goal_ = this->create_wall_timer(
+            std::chrono::seconds(5), std::bind(&OrchestratorNode::publish_goal_pose, this));
     }
 
     void OrchestratorNode::clock_callback(const rosgraph_msgs::msg::Clock::SharedPtr msg) {
@@ -35,6 +49,17 @@ namespace my_sim_tesi_ros2_nodes
         }
     }
 
+    // 从publish_drone_start重命名为start_robot_navigation
+    void OrchestratorNode::start_robot_navigation() {
+        if(!is_simulation_running_) {
+            return;
+        }
+        this->timer_drone_start_navigation_->cancel();
+        
+        // 跳过无人机导航并直接发布机器人的初始姿态
+        this->publish_initial_pose();
+    }
+    /*
     void OrchestratorNode::publish_drone_start() {
         if(!is_simulation_running_) {
             return;
@@ -45,7 +70,7 @@ namespace my_sim_tesi_ros2_nodes
         start_drone_publisher_->publish(start_msg);
         this->publish_initial_pose();
     }
-
+    */
     void OrchestratorNode::drone_arrived_callback(const std_msgs::msg::String & msg){
         auto message = msg.data;
         if(message != "end_drone_navigation" || drone_has_already_navigated_) {
@@ -92,6 +117,10 @@ namespace my_sim_tesi_ros2_nodes
 
     void OrchestratorNode::publish_goal_pose()
     {
+        if (goal_published_ || !is_simulation_running_) {
+            return;
+        }
+        
         auto goal_msg = geometry_msgs::msg::PoseStamped();
         
         goal_msg.header.frame_id = "map";
@@ -109,6 +138,9 @@ namespace my_sim_tesi_ros2_nodes
         goal_pose_publisher_->publish(goal_msg);
         RCLCPP_INFO(this->get_logger(), "Goal published! Navigating to [x, y, yaw] = [%f, %f, %f]",
             goal_msg.pose.position.x, goal_msg.pose.position.y, yaw);
+        
+        goal_published_ = true;
+        timer_publish_goal_->cancel();
     }
 
 } // namespace my_sim_tesi_ros2_nodes
