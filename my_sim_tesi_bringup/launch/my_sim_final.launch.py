@@ -214,6 +214,17 @@ def generate_launch_description():
         parameters=[os.path.join(pkg_project_bringup, 'config', 'pointcloud_to_laserscan.yaml')]
     )
 
+    robot_pointcloud_to_laserscan_node = Node(
+        package='pointcloud_to_laserscan',
+        executable='pointcloud_to_laserscan_node',
+        name='robot_pointcloud_to_laserscan_node',
+        output='screen',
+        remappings=[
+            ('cloud_in', '/robot_scan/rgbd_camera/points'),
+            ('scan', '/robot_scan/pcscan')
+        ],
+        parameters=[os.path.join(pkg_project_bringup, 'config', 'robot_pointcloud_to_laserscan.yaml')]
+    )
     # 添加全局TF参数
     return LaunchDescription([
         SetEnvironmentVariable('ROS_DOMAIN_ID', '13'),
@@ -231,6 +242,7 @@ def generate_launch_description():
         quadcopter_base_link_tf,
         pointcloud_to_laserscan_node,
         rviz,
+        robot_pointcloud_to_laserscan_node, 
         TimerAction(
             period=20.0,
             actions=[
