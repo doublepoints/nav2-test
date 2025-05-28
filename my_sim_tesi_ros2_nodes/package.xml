@@ -25,6 +25,8 @@
   <!-- Python依赖 - 用于Livox转换器 -->
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>sensor_msgs_py</exec_depend>
+  <exec_depend>python3-matplotlib</exec_depend>  <!-- 新增：用于高度分析工具 -->
+
 
 
   <test_depend>ament_lint_auto</test_depend>

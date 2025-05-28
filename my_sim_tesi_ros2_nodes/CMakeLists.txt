@@ -100,17 +100,12 @@ install(TARGETS
 install(DIRECTORY include/
   DESTINATION include/${PROJECT_NAME})
 
-# 新增以下内容来安装Python脚本
-#install(PROGRAMS
-#  scripts/odom_to_tf_node.py
-#  DESTINATION lib/${PROJECT_NAME} # 安装到 lib/my_sim_tesi_ros2_nodes/ 目录下
-#)
-
-# 安装Python脚本 - 确保它们是可执行的
+# 安装Python脚本 - 包含新增的高度分析工具
 install(
   PROGRAMS
     scripts/livox_to_laserscan_converter.py
     scripts/test_livox_converter.py
+    scripts/height_range_analyzer.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
