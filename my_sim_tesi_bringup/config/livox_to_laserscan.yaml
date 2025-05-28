@@ -3,7 +3,7 @@
 pointcloud_to_laserscan_node:
   ros__parameters:
     # 使用修正后的坐标系（绕X轴旋转180度修正倒挂）
-    target_frame: 'livox_frame_corrected'  
+    target_frame: 'livox_frame'  
     transform_tolerance: 0.1  # 增加容错时间确保TF变换成功
     
     # 关键修改：严格限制高度范围，避免地面点干扰
