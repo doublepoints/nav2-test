@@ -106,4 +106,12 @@ install(DIRECTORY include/
 #  DESTINATION lib/${PROJECT_NAME} # 安装到 lib/my_sim_tesi_ros2_nodes/ 目录下
 #)
 
+# 安装Python脚本 - 确保它们是可执行的
+install(
+  PROGRAMS
+    scripts/livox_to_laserscan_converter.py
+    scripts/test_livox_converter.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()
