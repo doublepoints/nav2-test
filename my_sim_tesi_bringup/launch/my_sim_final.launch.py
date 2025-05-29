@@ -235,7 +235,7 @@ def generate_launch_description():
     )
     # 添加全局TF参数
     return LaunchDescription([
-        SetEnvironmentVariable('ROS_DOMAIN_ID', '13'),
+        #SetEnvironmentVariable('ROS_DOMAIN_ID', '13'),
         SetEnvironmentVariable('TF_BUFFER_DURATION', '120.0'),
         SetEnvironmentVariable('TF_MESSAGE_FILTER_QUEUE_SIZE', '100'),
         bridge,
@@ -251,7 +251,7 @@ def generate_launch_description():
         pointcloud_to_laserscan_node,
         rviz,
         robot_pointcloud_to_laserscan_node, 
-        livox_to_laserscan_node,
+        #livox_to_laserscan_node,
         TimerAction(
             period=20.0,
             actions=[
