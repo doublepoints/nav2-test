@@ -26,6 +26,9 @@ public:
   GroundSegmentationParams params_;
   std::shared_ptr<GroundSegmentation> segmenter_;
   std::string gravity_aligned_frame_;
+private:
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr corrected_pointcloud_pub_;
+
 };
 
 SegmentationNode::SegmentationNode(const rclcpp::NodeOptions &node_options)
@@ -82,6 +85,9 @@ SegmentationNode::SegmentationNode(const rclcpp::NodeOptions &node_options)
       ground_topic, rclcpp::SensorDataQoS());
   obstacle_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
       obstacle_topic, rclcpp::SensorDataQoS());
+    // 初始化修正后点云发布者
+  corrected_pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
+      "/livox/lidar_corrected", 10);
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
   RCLCPP_INFO(this->get_logger(), "Segmentation node initialized");
@@ -99,7 +105,14 @@ void SegmentationNode::scanCallback(
   for (auto& point : cloud.points) {
       point.y = -point.y;
       point.z = -point.z;
+      // point.x 保持不变
   }
+  // 发布修正后的点云（可选，用于可视化对比）
+  sensor_msgs::msg::PointCloud2 corrected_msg;
+  pcl::toROSMsg(cloud, corrected_msg);
+  corrected_msg.header = msg->header;
+  corrected_msg.header.frame_id = "livox_frame_corrected";
+  corrected_pointcloud_pub_->publish(corrected_msg);
   // ==========================================================
   //                    修改结束
   // ==========================================================
@@ -151,6 +164,10 @@ void SegmentationNode::scanCallback(
   pcl::toROSMsg(obstacle_cloud, *obstacle_msg);
   ground_msg->header = msg->header;
   obstacle_msg->header = msg->header;
+  // *** 添加下面两行来修正 frame_id ***
+  ground_msg->header.frame_id = "livox_frame_corrected";
+  obstacle_msg->header.frame_id = "livox_frame_corrected";
+  // *** 修改结束 ***
   ground_pub_->publish(*ground_msg);
   obstacle_pub_->publish(*obstacle_msg);
 }

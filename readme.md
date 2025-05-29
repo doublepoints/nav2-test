@@ -19,3 +19,16 @@ export IGN_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu:$IGN_PLUGIN_PATH
 #为了避免和其他程序起冲突，从而使用别的空间
 export ROS_DOMAIN_ID=13
 
+20250529進捗-g1nav：
+pointcloud2laserscanを利用し、pointcloudからlaerscanに変換できました。
+その他に、床の影響を排除するために、linefit-ground-segmentationを使って、床と障害物のpointcloudを区別し,障害物のpointcloudを利用し、laserscanに変換しました。
+以下は実装プロセスをメモする
+laserscanに変換
+１：ros2 launch my_sim_tesi_bringup livox_to_laserscan.launch.py
+rviz2で可視化
+２：ros2 run rviz2 rviz2 -d src/my_sim_tesi_bringup/config/livox_visualization.rviz
+Pointcloudセグメンテーションする
+３：ros2 launch linefit_ground_segmentation_ros segmentation.launch.py
+
+
+
