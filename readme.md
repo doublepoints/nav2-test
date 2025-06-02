@@ -31,4 +31,10 @@ Pointcloudセグメンテーションする
 ３：ros2 launch linefit_ground_segmentation_ros segmentation.launch.py
 
 
+20250602進捗-g1nav:
+DDSをcycloneddsに変更したら、nav2の自律移動がうまくできなくて、
+現行の自律移動を実装したいでしがら、まずcycloneddsを変更しないことは重要です。
+
+
+
 

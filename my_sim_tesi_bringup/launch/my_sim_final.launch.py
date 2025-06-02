@@ -62,6 +62,21 @@ def generate_launch_description():
         }],
         output='screen'
     )
+    
+    # 启动 odom_to_tf_node.py
+    odom_to_tf_node = Node(
+        package='my_sim_tesi_ros2_nodes',
+        executable='odom_to_tf_node.py',
+        name='odom_to_tf_node',
+        output='screen',
+        parameters=[{
+            'use_sim_time': True,
+            'odom_topic': '/robot_scan/odometry',
+            'publish_tf': True,
+            'expected_odom_frame': 'robot_scan/odom',
+            'expected_base_frame': 'robot_scan/base_link',
+        }],
+    )
 
     robot_scan_static_frame_map = Node(
         package='tf2_ros',
@@ -251,6 +266,7 @@ def generate_launch_description():
         pointcloud_to_laserscan_node,
         rviz,
         robot_pointcloud_to_laserscan_node, 
+        odom_to_tf_node, 
         #livox_to_laserscan_node,
         TimerAction(
             period=20.0,

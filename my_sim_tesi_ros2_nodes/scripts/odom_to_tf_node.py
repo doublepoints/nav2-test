@@ -45,30 +45,9 @@ class OdomToTfNode(Node):
 
         t.header.stamp = msg.header.stamp
         
-        # 使用配置的 frame ID，而不是直接从消息中读取
-        # 确保 header.frame_id (odom frame) 是正确的
-        if msg.header.frame_id == self.expected_odom_frame_:
-            t.header.frame_id = self.expected_odom_frame_
-        elif msg.header.frame_id == "odom" and self.expected_odom_frame_.endswith("/odom"): # 处理Gazebo可能只发odom的情况
-             t.header.frame_id = self.expected_odom_frame_
-             self.get_logger().debug(f"Odometry header.frame_id is '{msg.header.frame_id}', using configured '{self.expected_odom_frame_}'.")
-        else:
-            self.get_logger().warn(
-                f"Odometry message header.frame_id is '{msg.header.frame_id}', "
-                f"but expected '{self.expected_odom_frame_}'. Using expected value. "
-                f"Consider checking Gazebo odometry plugin frame configuration."
-            )
-            t.header.frame_id = self.expected_odom_frame_
-
-
-        # 确保 child_frame_id (base_link frame) 是正确的
+        # 始终使用配置的 frame ID
+        t.header.frame_id = self.expected_odom_frame_
         t.child_frame_id = self.expected_base_frame_
-
-        # 从里程计消息中读取时间戳和坐标系名称
-        # 确保使用里程计消息的时间戳，这对时间同步至关重要
-        t.header.stamp = msg.header.stamp
-        t.header.frame_id = msg.header.frame_id      # 应该是 'robot_scan/odom'
-        t.child_frame_id = msg.child_frame_id      # 应该是 'robot_scan/base_link' (根据SDF修改)
 
         # 设置变换的平移
         t.transform.translation.x = msg.pose.pose.position.x
@@ -83,6 +62,7 @@ class OdomToTfNode(Node):
 
         # 发布变换
         self.tf_broadcaster.sendTransform(t)
+
 
 def main(args=None):
     rclpy.init(args=args)

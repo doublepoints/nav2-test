@@ -106,6 +106,7 @@ install(
     scripts/livox_to_laserscan_converter.py
     scripts/test_livox_converter.py
     scripts/height_range_analyzer.py
+    scripts/odom_to_tf_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
