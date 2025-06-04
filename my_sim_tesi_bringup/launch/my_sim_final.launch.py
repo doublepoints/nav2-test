@@ -30,11 +30,6 @@ def generate_launch_description():
     robot_scan_urdf = """<?xml version="1.0"?>
     <robot name="robot_scan">
         <link name="base_link"/>
-        <link name="lidar_link"/>
-        <joint name="lidar_joint" type="fixed">
-            <parent link="base_link"/>
-            <child link="lidar_link"/>
-            <origin xyz="0 0 0.1" rpy="0 0 0"/> </joint>
     </robot>
     """
 
@@ -233,14 +228,14 @@ def generate_launch_description():
         bridge,
         gz_sim,
         robot_scan_static_frame_map,
-        quadcopter_static_frame_map,
+        #quadcopter_static_frame_map,
         robot_scan_state_publisher,
-        quadcopter_state_publisher,
+        #quadcopter_state_publisher,
         tf2_buffer_server,
-        rgbd_camera_static_tf,
+        #rgbd_camera_static_tf,
         robot_rgbd_camera_static_tf,
-        quadcopter_base_link_tf,
-        pointcloud_to_laserscan_node,
+        #quadcopter_base_link_tf,
+        #pointcloud_to_laserscan_node,
         rviz,
         robot_pointcloud_to_laserscan_node, 
         TimerAction(

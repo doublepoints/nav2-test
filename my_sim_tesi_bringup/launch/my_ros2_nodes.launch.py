@@ -41,7 +41,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        pose_control_action_server,
-        pose_control_action_client,
+        #pose_control_action_server,
+        ##pose_control_action_client,
         orchestrator_node,
     ])
