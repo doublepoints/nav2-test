@@ -15,8 +15,6 @@ def generate_launch_description():
     pkg_project_bringup = get_package_share_directory('my_sim_tesi_bringup')
     pkg_project_gazebo = get_package_share_directory('my_sim_tesi_gazebo')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    # 获取 my_sim_tesi_ros2_nodes 包的路径，如果 odom_to_tf_node.py 在那里
-    pkg_my_sim_tesi_ros2_nodes = get_package_share_directory('my_sim_tesi_ros2_nodes')
 
     sdf_file_path = os.path.join(pkg_project_gazebo, 'models', 'pioneer2dx', 'model.sdf')
     try:
@@ -56,6 +54,19 @@ def generate_launch_description():
             'use_sim_time': True,
         }],
         output='screen'
+    )
+
+    # Publish TF from robot_scan/odom to robot_scan/base_link using odometry data
+    odom_to_tf_node = Node(
+        package='my_sim_tesi_ros2_nodes',
+        executable='odom_to_tf_node.py',
+        name='odom_to_tf_node',
+        output='screen',
+        parameters=[{
+            'odom_topic': '/robot_scan/odometry',
+            'odom_frame': 'robot_scan/odom',
+            'base_frame': 'robot_scan/base_link'
+        }]
     )
 
     robot_scan_static_frame_map = Node(
@@ -226,6 +237,7 @@ def generate_launch_description():
         SetEnvironmentVariable('TF_BUFFER_DURATION', '120.0'),
         SetEnvironmentVariable('TF_MESSAGE_FILTER_QUEUE_SIZE', '100'),
         bridge,
+        odom_to_tf_node,
         gz_sim,
         robot_scan_static_frame_map,
         #quadcopter_static_frame_map,

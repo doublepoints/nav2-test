@@ -10,16 +10,19 @@ class OdomToTFNode(Node):
     def __init__(self):
         super().__init__('odom_to_tf_node')
         
-        # Declare parameters for odom_frame and base_frame
-        # IMPORTANT CHANGE: Default child_frame_id changed to 'robot_scan/base_link'
-        self.odom_frame = self.declare_parameter('odom_frame', 'robot_scan/odom').value
-        self.base_frame = self.declare_parameter('base_frame', 'robot_scan/base_link').value # Changed from 'robot_scan/base_footprint'
+        # Declare parameters for odom_frame, base_frame and the input topic
+        self.odom_frame = self.declare_parameter(
+            'odom_frame', 'robot_scan/odom').value
+        self.base_frame = self.declare_parameter(
+            'base_frame', 'robot_scan/base_link').value
+        self.odom_topic = self.declare_parameter(
+            'odom_topic', '/robot_scan/odometry').value
         
         self.get_logger().info(f"Publishing TF from '{self.odom_frame}' to '{self.base_frame}'")
 
         self.subscription = self.create_subscription(
             Odometry,
-            '/odom',  # Assuming odometry is published on /odom topic
+            self.odom_topic,
             self.odom_callback,
             10)
         self.tf_broadcaster = TransformBroadcaster(self)

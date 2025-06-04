@@ -100,10 +100,10 @@ install(TARGETS
 install(DIRECTORY include/
   DESTINATION include/${PROJECT_NAME})
 
-# 新增以下内容来安装Python脚本
-#install(PROGRAMS
-#  scripts/odom_to_tf_node.py
-#  DESTINATION lib/${PROJECT_NAME} # 安装到 lib/my_sim_tesi_ros2_nodes/ 目录下
-#)
+# Install Python utility scripts
+install(PROGRAMS
+  scripts/odom_to_tf_node.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 ament_package()
