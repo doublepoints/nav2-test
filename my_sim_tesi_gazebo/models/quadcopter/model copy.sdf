@@ -1,4 +1,12 @@
 <?xml version="1.0"?>
+<model xmlns="http://ignitionrobotics.org/schemas/ignition/1.0" xmlns:sdf="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <name>quadcopter</name>
+    <version>1.0</version>
+    <description>Quadcopter model with 4 rotors and sensors.</description>
+    <author>Marco Gallo</author>
+    <maintainer>Marco Gallo</maintainer>
+    <license>BSD-3-Clause</license>
+</model>
 <sdf version="1.6">
     <model name="quadcopter">
         <link name="base_link">
@@ -173,25 +181,39 @@
                 </lidar>
             </sensor>
 
-            <sensor name="rgbd_camera" type="rgbd_camera">
+            <sensor name="rgbd_camera" type="rgbd">
                 <pose>0.0 0 0.05 0 0 0</pose>
                 <update_rate>15</update_rate>
-                <topic>/quadcopter/rgbd_camera/image_raw</topic>
+                 <!-- 这里指定 RGB 图像的基本参数 -->
                 <camera name="head">
                     <horizontal_fov>1.3962634</horizontal_fov>
                     <image>
-                        <width>640</width>
-                        <height>480</height>
-                        <format>R8G8B8</format>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8G8B8</format>
                     </image>
                     <clip>
-                        <near>0.2</near>
-                        <far>20.0</far>
+                    <near>0.2</near>
+                    <far>20.0</far>
                     </clip>
                 </camera>
+
+                <!-- 让 Gazebo 发布可见光图像到 /quadcopter/rgbd_camera/image_raw -->
+                <topic>/quadcopter/rgbd_camera/image_raw</topic>
+
+                <!-- 深度相机子标签 -->
                 <depth_camera>
+                    <!-- 深度图像话题，改成 /quadcopter/rgbd_camera/depth/image_raw -->
+                    <topic>/quadcopter/rgbd_camera/depth/image_raw</topic>
+                    <!-- 若需要发布 camera_info，可以指定 -->
                     <camera_info_topic>/quadcopter/rgbd_camera/depth/camera_info</camera_info_topic>
+                    <!-- 深度数据格式，和以前的 L16 相同即可 -->
+                    <format>L16</format>
+                    <!-- 点云话题，改成 /quadcopter/rgbd_camera/points -->
+                    <point_cloud_topic>/quadcopter/rgbd_camera/points</point_cloud_topic>
                 </depth_camera>
+
+                <!-- 一些常规参数 -->
                 <always_on>1</always_on>
                 <visualize>1</visualize>
             </sensor>
