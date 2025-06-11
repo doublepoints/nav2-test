@@ -1,0 +1,30 @@
+# my_sim_tesi_bringup/config/livox_to_laserscan.yaml
+# 针对倒挂安装的Livox MID-360的配置 (距离地面1.24m)
+pointcloud_to_laserscan_node:
+  ros__parameters:
+    # 使用修正后的坐标系（绕X轴旋转180度修正倒挂）
+    target_frame: 'livox_frame_corrected'  
+    transform_tolerance: 0.1  # 增加容错时间确保TF变换成功
+    
+    # 关键修改：严格限制高度范围，避免地面点干扰
+    # 雷达距地面1.24m，倒挂后地面在负Z方向约-1.24m处
+    # 只保留接近水平的扫描层数据
+    min_height: -1.038   # 雷达下方15cm范围
+    max_height: 0.405    # 雷达上方15cm范围
+    # 这样总共30cm的垂直范围，主要包含水平障碍物
+    
+    # 完整的360度扫描范围
+    angle_min: -3.14159  # -180度
+    angle_max: 3.14159   # 180度
+    angle_increment: 0.0044  # 0.25度，提高角度分辨率
+    scan_time: 0.033  # 30Hz，与雷达频率匹配
+    
+    # MID-360的有效距离范围
+    range_min: 0.2
+    range_max: 20.0
+    use_inf: true
+    inf_epsilon: 1.0
+    use_sim_time: true
+    concurrency_level: 1
+    # 增加队列大小以避免丢弃消息
+    queue_size: 50
