@@ -48,13 +48,29 @@ ros2 launch my_sim_tesi_bringup my_sim_final.launch.py
 功能二：将G1的pointcloud 进行地面和障碍物区分,并转化为laserscan,需要cyclonedds
 
 第一个终端，启动pointcloud2laserscan node
+
 ros2 launch my_sim_tesi_bringup livox_to_laserscan.launch.py
 
 第二个终端，启动pointclou的地面和障碍物分割功能
+
 ros2 launch linefit_ground_segmentation_ros segmentation.launch.py
 
 第三个终端，播放rosbag（如果有实际数据流，可以忽略）
+
 ros2 bag play /media/tridot/DATA2/dataset2/G1/rosbag2_2025_05_26-15_31_21/ --loop
 
 第四个终端，启动rviz2,可视化
 rviz2 -d src/my_sim_tesi_bringup/config/livox_visualization.rviz 
+
+功能三：建图
+
+1：启动建图
+ros2 launch my_sim_tesi_bringup my_sim_map_scan.launch.py
+
+（在启动的gazebo2中，输入key publihser来启动，在gazebo2中对无人小车的控制功能）
+
+2：保存地图（需要新的终端）
+ros2 run nav2_map_server map_saver_cli
+
+
+
