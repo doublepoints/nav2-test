@@ -1,1 +1,0 @@
-my_sim_tesi_ros2_interfaces;rclcpp;rclcpp_action;nav_msgs;geometry_msgs;rclcpp_components;tf2_geometry_msgs;sensor_msgs;std_msgs;tf2;rosgraph_msgs;tf2_ros;ament_lint_auto;ament_lint_common

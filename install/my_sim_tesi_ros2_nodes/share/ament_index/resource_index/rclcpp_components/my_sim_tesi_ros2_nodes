@@ -1,3 +1,0 @@
-my_sim_tesi_ros2_nodes::PoseControlActionServer;lib/libaction_server.so
-my_sim_tesi_ros2_nodes::PoseControlActionClient;lib/libaction_client.so
-my_sim_tesi_ros2_nodes::OrchestratorNode;lib/liborchestrator.so
