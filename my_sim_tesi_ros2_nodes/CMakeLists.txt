@@ -106,9 +106,8 @@ install(DIRECTORY include/
 #  DESTINATION lib/${PROJECT_NAME} # 安装到 lib/my_sim_tesi_ros2_nodes/ 目录下
 #)
 install(PROGRAMS
-  #scripts/odom_to_tf_node.py
+  scripts/odom_to_tf_node.py
   scripts/odometry_converter_node.py
-  scripts/test_odometry_conversion.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

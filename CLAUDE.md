@@ -81,14 +81,7 @@ ros2 bag play /path/to/bag --clock
 
 （例如：ros2 bag play /media/tridot/DATA2/dataset2/G1/rosbag2_2025_05_26-15_31_21 --clock）
 
-# 终端 3：显示地图
-#方法1：
-./src/my_sim_tesi_bringup/scripts/diagnose_rviz.sh
-
-#方法2：
-rviz2 -d src/my_sim_tesi_bringup/config/simple_slam_viz.rviz
-
-# 终端 4：保存地图
+# 终端 3：保存地图
 ros2 run nav2_map_server map_saver_cli
 
 ```
