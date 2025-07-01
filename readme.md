@@ -83,7 +83,6 @@ ros2 launch my_sim_tesi_bringup complete_rosbag_slam.launch.py
 方法1：./src/my_sim_tesi_bringup/scripts/diagnose_rviz.sh
 方法2：rviz2 -d src/my_sim_tesi_bringup/config/simple_slam_viz.rviz
 
-
 3：保存地图（需要新的终端）--未测试
 ros2 run nav2_map_server map_saver_cli
 

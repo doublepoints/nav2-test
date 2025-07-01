@@ -14,7 +14,7 @@ def generate_launch_description():
         name='livox_frame_corrected_tf',
         arguments=[
             '0', '0', '0',           
-            str(math.pi), '0', '0',  
+            '0', '0', '0',           # 恒等变换，因为数据已经在代码中被修正
             'livox_frame',           
             'livox_frame_corrected'  
         ],
@@ -85,7 +85,7 @@ def generate_launch_description():
         executable='static_transform_publisher',
         name='static_transform_publisher_laser',
         output='screen',
-        arguments=['0', '0', '0.2', '0', '0', '0', '1', 'base_link', 'livox_frame'],
+        arguments=['0', '0', '0.2', '0', '0', '0', 'base_link', 'livox_frame'],
         parameters=[{'use_sim_time': True}]
     )
     
@@ -119,12 +119,12 @@ def generate_launch_description():
         output='screen'
     )
     
-    # 7. RViz2 for visualization (optional) - 使用工作的配置文件
+    # 7. RViz2 for visualization - 使用相对路径启动以正确显示地图
     rviz2_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'slam_visualization.rviz')],
+        arguments=['-d', 'src/my_sim_tesi_bringup/config/simple_slam_viz.rviz'],
         parameters=[{'use_sim_time': True}],
         output='screen'
     )

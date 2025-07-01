@@ -90,7 +90,7 @@ Visualization Manager:
       Frames:
         All Enabled: true
       Marker Alpha: 1
-      Marker Scale: 0.5
+      Marker Scale: 5
       Name: TF
       Show Arrows: true
       Show Axes: true

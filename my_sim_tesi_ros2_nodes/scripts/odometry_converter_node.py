@@ -51,6 +51,10 @@ class OdometryConverterNode(Node):
         if self.publish_tf:
             self.tf_broadcaster = TransformBroadcaster(self)
         
+        # 记录起始位置用于计算相对偏移
+        self.initial_position = None
+        self.initial_orientation = None
+        
         # 创建订阅者
         if UNITREE_MSG_AVAILABLE:
             self.subscription = self.create_subscription(
@@ -71,6 +75,18 @@ class OdometryConverterNode(Node):
         根据C++代码结构转换消息
         """
         try:
+            # 记录起始位置（第一次接收到消息时）
+            if self.initial_position is None:
+                self.initial_position = [float(msg.position[0]), float(msg.position[1]), float(msg.position[2])]
+                self.initial_orientation = [
+                    float(msg.imu_state.quaternion[0]),  # w
+                    float(msg.imu_state.quaternion[1]),  # x
+                    float(msg.imu_state.quaternion[2]),  # y
+                    float(msg.imu_state.quaternion[3])   # z
+                ]
+                self.get_logger().info(f'Initial position set: {self.initial_position}')
+                self.get_logger().info(f'Initial orientation set: {self.initial_orientation}')
+            
             odom_msg = Odometry()
             
             # 设置时间戳 - 使用当前时间，因为SportModeState可能没有时间戳
@@ -78,11 +94,12 @@ class OdometryConverterNode(Node):
             odom_msg.header.frame_id = self.odom_frame
             odom_msg.child_frame_id = self.base_frame
             
-            # 设置位置 - 从position()数组获取
-            # 根据C++代码：position()[0], position()[1], position()[2]
-            odom_msg.pose.pose.position.x = float(msg.position[0])
-            odom_msg.pose.pose.position.y = float(msg.position[1])
-            odom_msg.pose.pose.position.z = float(msg.position[2])
+            # 设置位置 - 计算相对于起始位置的偏移
+            # 保持 x,y 的相对偏移以支持 SLAM
+            odom_msg.pose.pose.position.x = float(msg.position[0]) - self.initial_position[0]
+            odom_msg.pose.pose.position.y = float(msg.position[1]) - self.initial_position[1]
+            # z 坐标特殊处理：保持在合理高度
+            odom_msg.pose.pose.position.z = 0.72  # 固定高度，避免地下问题
             
             # 设置方向 - 从imu_state.quaternion获取
             # 根据C++代码：quaternion()[0]=w, quaternion()[1]=x, quaternion()[2]=y, quaternion()[3]=z
@@ -153,7 +170,7 @@ class OdometryConverterNode(Node):
             t.header.frame_id = self.odom_frame
             t.child_frame_id = self.base_frame
             
-            # 设置平移
+            # 设置平移 - odom 到 base_link 的变换表示机器人相对于起始位置的移动
             t.transform.translation.x = odom_msg.pose.pose.position.x
             t.transform.translation.y = odom_msg.pose.pose.position.y
             t.transform.translation.z = odom_msg.pose.pose.position.z
